@@ -2,12 +2,13 @@ var Firebase = require("firebase");
 var _ = require('lodash');
 var firebase = new Firebase("https://luminous-inferno-2359.firebaseio.com");
 
+var difficulty = 0.5;
+
 var game = module.exports = {
   // Resets the game board with random mines
   start: function(width, height) {
     this.width = width;
     this.height = height;
-
     this.board = _.times(height, function(y) {
       return _.times(width, function(x) {
         return { mine: Math.random() < 0.1, open: false, nearby: 0, x: x, y: y };
@@ -39,7 +40,7 @@ var game = module.exports = {
   watchBoard: function(fn) {
     _.times(this.height, function(y) {
       firebase.child('board/' + y).on("child_changed", function(data) {
-        fn(+data.key(), y, data.val());
+        fn(data.val());
       });
     });
   },
