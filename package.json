@@ -6,6 +6,7 @@
   "author": "Peter West <peterjwest3@gmail.com> (https://github.com/peterjwest/)",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.12.3",
     "firebase": "^2.2.3",
     "lodash": "^3.6.0",
     "raphael": "^2.1.4"
