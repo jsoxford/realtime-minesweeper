@@ -3,8 +3,10 @@ var _ = require('lodash');
 var firebase = new Firebase("https://luminous-inferno-2359.firebaseio.com");
 
 var game = module.exports = {
+  // Resets the game board with random mines
   start: function(width, height) {
     var self = this;
+
     this.width = width;
     this.height = height;
 
@@ -14,26 +16,24 @@ var game = module.exports = {
       });
     })
 
-    this.board.map(function(row, y) {
-      row.map(function(space, x) {
-        self.getSiblings(x, y).map(function(sibling) {
-          if (sibling.mine) space.nearby++;
-        })
-      })
-    });
+    this.calculateNearby();
 
     firebase.child('board').set(this.board);
     firebase.child('moves').set([]);
   },
+  // Gets the entire board from the server
   getBoard: function(fn) {
     var self = this;
+
     firebase.child('board').once('value', function(data) {
       self.board = data.val();
       fn(data.val());
     });
   },
+  // Watches for moves and applies them to the board
   watchMoves: function() {
     var self = this;
+
     firebase.child('moves').on('child_added', function(data) {
       data = data.val();
       if (self.board[data.y][data.x].open === false) {
@@ -42,6 +42,7 @@ var game = module.exports = {
       }
     });
   },
+  // Watches for changes to the board and sends to a callback
   watchBoard: function(fn) {
     _.times(this.height, function(y) {
       firebase.child('board/' + y).on("child_changed", function(data) {
@@ -49,11 +50,27 @@ var game = module.exports = {
       });
     });
   },
+  // Makes a move
   makeMove: function(x, y, user) {
     firebase.child('moves').push({x: x, y: y, user: user});
   },
-  getSiblings: function(x, y) {
+  // Calculates the number of mines around a space
+  calculateNearby: function() {
     var self = this;
+
+    this.board.map(function(row, y) {
+      row.map(function(space, x) {
+        space.nearby = 0;
+        self.getAdjacents(x, y).map(function(sibling) {
+          if (sibling.mine) space.nearby++;
+        })
+      })
+    });
+  },
+  // Gets the adjacent spaces for a space
+  getAdjacents: function(x, y) {
+    var self = this;
+
     var siblings = [];
     [-1, 0, 1].map(function(yy) {
       [-1, 0, 1].map(function(xx) {
