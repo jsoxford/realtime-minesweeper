@@ -1,0 +1,20 @@
+{
+  "name": "realtime-minesweeper",
+  "description": "Realtime cross browser minesweeper!",
+  "version": "0.0.0",
+  "main": "index.js",
+  "author": "Peter West <peterjwest3@gmail.com> (https://github.com/peterjwest/)",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^2.2.3",
+    "lodash": "^3.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsoxford/realtime-minesweeper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jsoxford/realtime-minesweeper/issues"
+  },
+  "homepage": "https://github.com/jsoxford/realtime-minesweeper"
+}
