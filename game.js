@@ -12,7 +12,7 @@ var game = module.exports = {
       return _.times(width, function(x) {
         return { mine: Math.random() < 0.1, open: false, nearby: 0, x: x, y: y };
       });
-    })
+    });
 
     this.calculateNearby();
 
@@ -33,7 +33,6 @@ var game = module.exports = {
       if (game.setCell(data.x, data.y, data.user)) {
         firebase.child('board').set(game.board);
       }
-      game.renderBoard();
     });
   },
   // Watches for changes to the board and sends to a callback
@@ -82,5 +81,15 @@ var game = module.exports = {
       });
     });
     return adjacents;
+  },
+  // Renders the board to the console
+  renderBoard: function() {
+    console.log(_.repeat('- ', 16));
+    this.board.map(function(row, y) {
+      console.log(row.map(function(cell, x) {
+        return cell.mine ? 'X' : (cell.open ? cell.nearby : '?');
+      }).join(' '));
+    });
+    console.log(_.repeat('- ', 16) + '\n');
   }
 };
