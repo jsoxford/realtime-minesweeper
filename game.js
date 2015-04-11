@@ -6,13 +6,20 @@ var game = module.exports = {
   start: function(width, height) {
     this.width = width;
     this.height = height;
-    firebase.child('board').set(
-      _.times(height, function() {
-        return _.times(width, function() {
-          return { mine: false, open: false, nearby: 0 };
-        });
-      })
-    );
+
+    this.board = _.times(height, function() {
+      return _.times(width, function() {
+        return { mine: false, open: false, nearby: 0 };
+      });
+    })
+
+    // this.board.map(function(row, y) {
+    //   row.map(function(space, x) {
+    //     _.range(-1, 1)
+    //   })
+    // });
+
+    firebase.child('board').set(this.board);
     firebase.child('moves').set([]);
   },
   getBoard: function(fn) {
