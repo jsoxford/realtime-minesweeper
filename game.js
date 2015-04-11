@@ -4,20 +4,25 @@ var firebase = new Firebase("https://luminous-inferno-2359.firebaseio.com");
 
 var game = module.exports = {
   start: function(width, height) {
+    var self = this;
     this.width = width;
     this.height = height;
 
     this.board = _.times(height, function() {
       return _.times(width, function() {
-        return { mine: false, open: false, nearby: 0 };
+        return { mine: Math.random() < 0.3, open: false, nearby: 0 };
       });
     })
 
-    // this.board.map(function(row, y) {
-    //   row.map(function(space, x) {
-    //     _.range(-1, 1)
-    //   })
-    // });
+    this.board.map(function(row, y) {
+      row.map(function(space, x) {
+        self.getSiblings(x, y).map(function(sibling) {
+          if (sibling.mine) space.nearby++;
+        })
+      })
+    });
+
+    console.log(this.board);
 
     firebase.child('board').set(this.board);
     firebase.child('moves').set([]);
@@ -48,5 +53,17 @@ var game = module.exports = {
   },
   makeMove: function(x, y, user) {
     firebase.child('moves').push({x: x, y: y, user: user});
+  },
+  getSiblings: function(x, y) {
+    var self = this;
+    var siblings = [];
+    [-1, 0, 1].map(function(yy) {
+      [-1, 0, 1].map(function(xx) {
+        if (self.board[y + yy] && self.board[y + yy][x + xx]) {
+          siblings.push(self.board[y + yy][x + xx]);
+        }
+      });
+    });
+    return siblings;
   }
 };
