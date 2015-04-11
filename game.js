@@ -22,8 +22,6 @@ var game = module.exports = {
       })
     });
 
-    console.log(this.board);
-
     firebase.child('board').set(this.board);
     firebase.child('moves').set([]);
   },
